@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>window.ai</title>
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <main>
+      <h1>Capabilities</h1>
+
+      <p>To know how many tokens a string will consume, without actually processing it, developers can use the countPromptTokens() method:</p>
+
+      <pre class="code-snippet">
+const capabilities = await ai.languageModel.capabilities();
+console.log(capabilities.available); </pre>
+
+      <p>
+        The capabilities.available property is a string that can take one of three values:<p>
+          <ul>
+            <li>
+              "no", indicating the device or browser does not support prompting a language model at all.
+            </li>
+            <li>
+              "after-download", indicating the device or browser supports prompting a language model, but it needs to be downloaded before it can be used.
+            </li>
+            <li>
+              "readily", indicating the device or browser supports prompting a language model and it’s ready to be used without any downloading steps.
+            </li>
+          </ul>
+      </p>
+      <a href="../1-prompt/1.0-simple.html">➡️</a>
+    </main>
+
+    <script>
+      async function start() {
+        console.log(`
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Capabilities %
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        `);
+
+        const capabilities = await ai.languageModel.capabilities();
+        console.log(capabilities.available);
+
+        console.table(capabilities);
+
+      }
+
+      start();
+    </script>
+
+    <script src="../audio-slides.js"></script>
+  </body>
+</html>
