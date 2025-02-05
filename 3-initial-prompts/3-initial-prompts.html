@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>window.ai</title>
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+    </script>
+  </head>
+  <body>
+    <main>
+      <h1>Initial Prompts (examples)</h1>
+
+      <pre class="mermaid">
+        flowchart TD
+        A[Create AI Session]:::blue --> B[(User/Assistant examples)]:::purple
+        B -->C{{Browser AI}}:::orange
+        C --> |🕵️‍♀️🤖| A
+        A --> D[Prompt 1: Predict Emoji?]:::green
+        A --> E[Prompt 2: Predict Emoji?]:::green
+        D --> |Processing| F[Result 1]:::yellow
+        E --> |Processing| G[Result 2]:::yellow
+
+        classDef blue stroke:#0077b6,fill:#0077b6,color:white
+        classDef orange stroke:#ff9f1c,fill:#ff9f1c,color:black
+        classDef green stroke:#2ecc71,fill:#2ecc71,color:white
+        classDef yellow stroke:#f1c40f,fill:#f1c40f,color:black
+        classDef purple stroke:#9b59b6,fill:#9b59b6,color:white
+      </pre>
+
+      <p>
+        <em>Requires disabling of "chrome://flags/#text-safety-classifier"</em>
+      </p>
+
+      <pre class="code-snippet">
+        const <b class="sessionClass">session</b> = await <b class="keyword">ai</b>.<b class="keyword">languageModel</b>.<b class="stream">create</b>({
+          <b class="keyword">initialPrompts</b>: [
+            {
+              <b class="keyword">role</b>: <b class="string">"system"</b>,
+              <b class="keyword">content</b>:
+                <b class="string">"Predict up to 5 emojis as a response to a comment. Output emojis, comma-separated."</b>,
+            },
+            { <b class="keyword">role</b>: <b class="string">"user"</b>, <b class="keyword">content</b>: <b class="string">"This is amazing!"</b> },
+            { <b class="keyword">role</b>: <b class="string">"assistant"</b>, <b class="keyword">content</b>: <b class="string">"❤️, ➕"</b> },
+            { <b class="keyword">role</b>: <b class="string">"user"</b>, <b class="keyword">content</b>: <b class="string">"LGTM"</b> },
+            { <b class="keyword">role</b>: <b class="string">"assistant"</b>, <b class="keyword">content</b>: <b class="string">"👍, 🚢"</b> },
+          ],
+        });
+
+        <b class="comment">// Clone an existing session for efficiency, instead of recreating one each time.</b>
+        async function <b class="stream">predictEmoji</b>(<b class="keyword">comment</b>) {
+          const <b class="keyword">freshSession</b> = await <b class="sessionClass">session</b>.<b class="stream">clone</b>();
+          return await <b class="keyword">freshSession</b>.<b class="stream">prompt</b>(<b class="keyword">comment</b>);
+        }
+
+        const <b class="resultClass">result1</b> = await <b class="stream">predictEmoji</b>(<b class="string">"Back to the drawing board"</b>);
+
+        const <b class="resultClass">result2</b> = await <b class="stream">predictEmoji</b>(
+          <b class="string">"This javascript meetup is the best!"</b>
+        );
+      </pre>
+
+      <a href="../4-custom-role/4-custom-role.html">➡️</a>
+    </main>
+
+    <script>
+      async function start() {
+        console.log(`
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Initial Prompts %
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        `);
+        console.log('Starting the AI model 😬...');
+
+        const session = await ai.languageModel.create({
+          initialPrompts: [
+            {
+              role: 'system',
+              content:
+                'Predict up to 5 emojis as a response to a comment. Output as emojis, comma-separated.',
+            },
+            { role: 'user', content: 'This is amazing!' },
+            { role: 'assistant', content: '❤️, ➕' },
+            { role: 'user', content: 'LGTM' },
+            { role: 'assistant', content: '👍, 🚢' },
+            { role: 'user', content: 'javascript meetup' },
+            { role: 'assistant', content: '🍻, 💻' },
+          ],
+        });
+
+        // Clone an existing session for efficiency, instead of recreating one each time.
+        async function predictEmoji(comment) {
+          const freshSession = await session.clone();
+          return await freshSession.prompt(comment);
+        }
+
+        const result1 = await predictEmoji('Back to the drawing board');
+        console.log('result1', result1);
+
+        const result2 = await predictEmoji(
+          'This javascript meetup is the best!'
+        );
+        console.log('result2', result2);
+      }
+
+      start();
+    </script>
+    <script src="../audio-slides.js"></script>
+  </body>
+</html>

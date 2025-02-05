@@ -11,6 +11,7 @@
       href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
       rel="stylesheet"
     />
+
     <script type="module">
       import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
       mermaid.initialize({ startOnLoad: true, theme: 'dark' });
@@ -18,13 +19,14 @@
   </head>
   <body>
     <main>
-      <h1>Simple prompting</h1>
+      <h1>System Prompts (context)</h1>
+      <!-- TODO: Save session capabilities to storage after a browser restart, so the user can continue with the model where they left off -->
 
       <pre class="mermaid">
         flowchart TD
-        B[Create AI Session]:::blue
-        B <--> C{{Browser AI}}:::orange
-        B --> |languageModel| D[Prompt: Write me a poem]:::green
+        B[Create AI Session]:::blue -->|System Prompt| C{{Browser AI}}:::orange
+        B <-->|🐹| C
+        B --> D[Prompt: What is your favorite food?]:::green
         D --> |Processing| E[Result]:::yellow
 
         classDef blue stroke:#0077b6,fill:#0077b6,color:white
@@ -35,33 +37,29 @@
       </pre>
 
       <pre class="code-snippet">
+        const <b class="sessionClass">session</b> = await <b class="keyword">ai</b>.<b class="keyword">languageModel</b>.<b class="stream">create</b>({
+          <b class="keyword">systemPrompt</b>: <b class="string">"Pretend to be an eloquent hamster 🐹."</b>
+        });
 
-        const <b class="sessionClass">session</b> = await <b class="keyword">ai</b>.<b class="keyword">languageModel</b>.<b class="stream">create</b>();
-
-        <b class="comment">// Prompt the model and wait for the whole result to come back.</b>
-        const <b class="resultClass">result</b> = await <b class="sessionClass">session</b>.<b class="stream">prompt</b>(<b class="string">"Write me a poem."</b>);
-        console.<b class="stream">log</b>(<b class="resultClass">result</b>);
+        console.<b class="stream">log</b>(await <b class="sessionClass">session</b>.<b class="stream">prompt</b>(<b class="string">"What is your favorite food?"</b>));
       </pre>
 
-      <a href="./1.1-stream.html">➡️</a>
+      <a href="../3-initial-prompts/3-initial-prompts.html">➡️</a>
     </main>
 
     <script>
       async function start() {
-        const before = new Date();
         console.log(`
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % Simple Prompting %
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % System prompts %
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         `);
-        console.log('Starting the AI model...');
-        const session = await ai.languageModel.create();
+        console.log('Starting the AI model 🐹...');
+        const session = await ai.languageModel.create({
+          systemPrompt: 'Pretend to be an eloquent hamster.',
+        });
 
-        // Prompt the model and wait for the whole result to come back.
-        const result = await session.prompt('Write me a poem.');
-        const after = new Date();
-        console.log(result);
-        console.log(`Time taken: ${(after - before) / 1000}s`);
+        console.log(await session.prompt('What is your favorite food?'));
       }
 
       start();

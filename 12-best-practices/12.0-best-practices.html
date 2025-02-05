@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>window.ai</title>
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <main>
+      <h1>Best Practices</h1>
+
+      <p>
+        Best practices for session management:<p>
+          <ul>
+            <li>
+              Initialize a session with a system prompt
+            </li>
+            <li>
+              Clone a main session
+            </li>
+            <li>
+              Restore past sessions where required
+            </li>
+            <li>
+              Preserve session quota by letting the user stop the model when its answer isn't useful
+            </li>
+            <li>
+              Debug on  <b>chrome://on-device-internals/</b>
+            </li>
+          </ul>
+      </p>
+      <a href="../13-conclusions/13-conclusions.html">➡️</a>
+    </main>
+
+    <script>
+      async function start() {
+        console.log(`
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Best Practices %
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        `);
+
+        const capabilities = await ai.languageModel.capabilities();
+        console.log(capabilities.available);
+
+        console.table(capabilities);
+
+      }
+
+      start();
+    </script>
+
+    <script src="../audio-slides.js"></script>
+  </body>
+</html>

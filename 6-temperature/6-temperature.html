@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>window.ai</title>
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+    </script>
+  </head>
+  <body>
+    <main>
+      <h1>Custom Temperature</h1>
+
+      <pre class="mermaid">
+        flowchart TD
+        A[Create logical session]:::blue --> B[(temperature: 0.5 topK: 10)]:::purple
+        B -->C{{Logical Output}}:::green
+
+        D[Create creative session]:::blue --> E[(temperature: 1.5 topK: null)]:::orange
+        E -->F{{Creative Output}}:::yellow
+
+        classDef blue stroke:#0077b6,fill:#0077b6,color:white
+        classDef purple stroke:#9b59b6,fill:#9b59b6,color:white
+        classDef green stroke:#2ecc71,fill:#2ecc71,color:white
+        classDef yellow stroke:#f1c40f,fill:#f1c40f,color:black
+        classDef orange stroke:#ff9f1c,fill:#ff9f1c,color:black
+      </pre>
+
+      <p>
+        A low temperature with a high 𝐾 (or no top-K) leads to deterministic and
+        focused outputs.
+      </p>
+      <p>
+        A high temperature with a low 𝐾 generates creative and varied outputs
+        while maintaining coherence.
+      </p>
+
+      <pre class="code-snippet">
+          const <b class="keyword">logicalSession</b> = await <b class="keyword">ai</b>.<b class="keyword">languageModel</b>.<b class="stream">create</b>({
+            <b class="keyword">temperature</b>: <b class="keyword">0.5</b>,
+            <b class="keyword">topK</b>: <b class="keyword">0</b>,
+          });
+
+          await <b class="keyword">logicalSession</b>.<b class="stream">prompt</b>(<b class="string">"Tell me a short, unusual joke."</b>)
+
+          const <b class="keyword">creativeSession</b> = await <b class="keyword">ai</b>.<b class="keyword">languageModel</b>.<b class="stream">create</b>({
+            <b class="keyword">temperature</b>: <b class="keyword">1.5</b>,
+            <b class="keyword">topK</b>: <b class="keyword">5</b>,
+          });
+
+          await <b class="keyword">creativeSession</b>.<b class="stream">prompt</b>(<b class="string">"Tell me a short, unusual joke."</b>)
+      </pre>
+
+      <a href="../7-persistance/7.0-session-persistance.html">➡️</a>
+    </main>
+
+    <script>
+      async function start() {
+        console.log(`
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Custom Temperature %
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        `);
+
+        // use temperature to decrease the sensitivity to low probability candidates
+        const logicalSession = await ai.languageModel.create({
+          temperature: 0.5,
+          topK: 0,
+        });
+
+        const capabilities = await ai.languageModel.capabilities();
+
+        const creativeSession = await ai.languageModel.create({
+          temperature: 1.5,
+          topK: 5,
+        });
+
+        // capabilities also contains defaultTopK and maxTopK.
+        console.log('Structured, logical, and predictable...');
+
+        console.log(await logicalSession.prompt('Tell me a short joke.'));
+
+        console.log('Creative and unexpected elements...');
+        console.log(await creativeSession.prompt('Tell me a short joke.'));
+      }
+
+      start();
+    </script>
+    <script src="../audio-slides.js"></script>
+  </body>
+</html>

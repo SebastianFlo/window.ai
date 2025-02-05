@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>window.ai</title>
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+    </script>
+  </head>
+  <body>
+    <main>
+      <h1>Session abort</h1>
+
+      <pre class="mermaid">
+        flowchart LR
+          A[Session]:::blue --> B[Streaming Prompt]:::yellow
+          B --> |"abort()"| C[Aborted Stream]:::red
+
+        classDef blue stroke:#0077b6,fill:#0077b6,color:white
+        classDef yellow fill:#f1c40f,color:black
+        classDef red stroke:#e74c3c,fill:#e74c3c,color:white
+      </pre>
+
+      <p>
+        Aborting a streaming prompt allows you to immediately stop the stream
+        without waiting for the model to finish generating. This is useful for
+        long-running generations where the user wants to cancel the operation.
+      </p>
+
+      <div style="width: 100%; display: flex; justify-content: center">
+        <button id="startButton">Start Stream</button>
+        <button id="abortButton" style="margin-left: 10px">Abort</button>
+      </div>
+
+      <pre class="code-snippet">
+        const <b class="sessionClass">session</b> = await <b class="keyword">ai</b>.<b class="keyword">languageModel</b>.<b class="stream">create</b>();
+        const <b class="keyword">controller</b> = new <b class="stream">AbortController</b>();
+
+        const <b class="keyword">startButton</b> = document.<b class="stream">getElementById</b>(<b class="string">"startButton"</b>);
+        const <b class="keyword">abortButton</b> = document.<b class="stream">getElementById</b>(<b class="string">"abortButton"</b>);
+
+        <b class="keyword">startButton</b>.<b class="stream">addEventListener</b>(<b class="string">"click"</b>, async () => {
+          try {
+            let <b class="keyword">text</b> = <b class="string">""</b>;
+            const <b class="keyword">stream</b> = await <b class="sessionClass">session</b>.<b class="stream">promptStreaming</b>(
+              <b class="string">"Write a story about a magical forest."</b>,
+              { <b class="keyword">signal</b>: <b class="keyword">controller</b>.signal }
+            );
+
+            for await (const <b class="keyword">chunk</b> of <b class="keyword">stream</b>) {
+              <b class="keyword">text</b> += <b class="keyword">chunk</b>;
+              console.<b class="stream">log</b>(<b class="string">"Chunk received:"</b>, <b class="keyword">chunk</b>);
+              console.<b class="stream">log</b>(<b class="string">"Story so far:"</b>, <b class="keyword">text</b>);
+            }
+          } catch (<b class="keyword">err</b>) {
+            if (<b class="keyword">err</b>.name === <b class="string">"AbortError"</b>) {
+              console.<b class="stream">log</b>(<b class="string">"Stream aborted"</b>);
+            }
+          }
+        });
+
+        <b class="keyword">abortButton</b>.<b class="stream">addEventListener</b>(<b class="string">"click"</b>, () => {
+          <b class="keyword">controller</b>.<b class="stream">abort</b>();
+        });
+      </pre>
+
+      <a href="./8-session-destruction.html">➡️</a>
+    </main>
+
+    <script>
+      async function start() {
+        console.log(`
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Session abort %
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        `);
+
+        const session = await ai.languageModel.create();
+        const startButton = document.getElementById('startButton');
+        const abortButton = document.getElementById('abortButton');
+        let controller = null;
+
+        startButton.addEventListener('click', async () => {
+          // Create new controller for this stream
+          controller = new AbortController();
+          startButton.disabled = true;
+          abortButton.disabled = false;
+
+          try {
+            let text = '';
+            const stream = await session.promptStreaming(
+              'Write a story about a magical forest.',
+              { signal: controller.signal }
+            );
+
+            console.log('Stream started =====');
+            for await (const chunk of stream) {
+              text += chunk;
+              console.log('Chunk:', chunk);
+              console.log('Story so far:', text);
+            }
+            console.log('Stream completed =====');
+            console.log('Final story:', text);
+
+            startButton.disabled = false;
+            abortButton.disabled = true;
+          } catch (err) {
+            if (err.name === 'AbortError') {
+              console.log('Stream aborted =====');
+            } else {
+              console.error('Error =====', err);
+            }
+            startButton.disabled = false;
+            abortButton.disabled = true;
+          }
+        });
+
+        abortButton.addEventListener('click', () => {
+          if (controller) {
+            controller.abort();
+          }
+        });
+
+        // Initially disable abort button
+        abortButton.disabled = true;
+      }
+
+      start();
+    </script>
+    <script src="../audio-slides.js"></script>
+  </body>
+</html>

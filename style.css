@@ -95,6 +95,16 @@ button:disabled {
   font-weight: bold;
 }
 
+.code-snippet .sessionClass {
+  color: #0077b6; /* Purple for keywords */
+  font-weight: bold;
+}
+
+.code-snippet .resultClass {
+  color: #f1c40f; /* Purple for keywords */
+  font-weight: bold;
+}
+
 .code-snippet .string {
   color: #98c379; /* Green for strings */
 }

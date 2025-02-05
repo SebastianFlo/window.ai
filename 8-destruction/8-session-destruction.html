@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>window.ai</title>
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+    </script>
+  </head>
+  <body>
+    <main>
+      <h1>Session destruction</h1>
+
+      <pre class="mermaid">
+        flowchart LR
+          A[Session]:::blue --> B[Prompt 1]:::green
+          B --> |"destroy()"| C[Session]:::blue
+          C --> |"prompt()"| D[Error]:::red
+
+        classDef blue stroke:#0077b6,fill:#0077b6,color:white
+        classDef green stroke:#2ecc71,fill:#2ecc71,color:white
+        classDef red stroke:#e74c3c,fill:#e74c3c,color:white
+      </pre>
+
+      <p>
+        Destroying the session allows the user agent to unload the language
+        model from memory without waiting for garbage collection, which can be
+        useful since language models can be quite large, if no other APIs or
+        sessions are using it.
+      </p>
+
+      <div
+        style="width: 100%; display: flex; justify-content: center; gap: 10px"
+      >
+        <button id="promptButton">Generate Prompt</button>
+        <button id="destroyButton">Destroy</button>
+      </div>
+
+      <pre class="code-snippet">
+        const <b class="sessionClass">session</b> = await <b class="keyword">ai</b>.<b class="keyword">languageModel</b>.<b class="stream">create</b>({
+          <b class="keyword">systemPrompt</b>:
+            <b class="string">"You are a friendly, helpful assistant specialized in clothing choices. Keep it short."</b>,
+        });
+
+        const <b class="resultClass">result</b> = await <b class="sessionClass">session</b>.<b class="stream">prompt</b>(<b class="string">`What should I wear today? Keep it short.`</b>);
+
+        const <b class="keyword">promptButton</b> = document.<b class="stream">getElementById</b>(<b class="string">"promptButton"</b>);
+        const <b class="keyword">destroyButton</b> = document.<b class="stream">getElementById</b>(<b class="string">"destroyButton"</b>);
+
+        <b class="keyword">promptButton</b>.<b class="stream">addEventListener</b>(<b class="string">"click"</b>, async () => {
+          const <b class="resultClass">result</b> = await <b class="sessionClass">session</b>.<b class="stream">prompt</b>(<b class="string">`What should I wear today? Keep it short.`</b>);
+          console.<b class="stream">log</b>(<b class="string">'New prompt answer ====='</b>, <b class="resultClass">result</b>);
+        });
+
+        <b class="keyword">destroyButton</b>.<b class="stream">addEventListener</b>(<b class="string">"click"</b>, async () => {
+           <b class="sessionClass">session</b>.<b class="stream">destroy</b>();
+          const <b class="resultClass">result2</b> = await <b class="sessionClass">session</b>.<b class="stream">prompt</b>(<b class="string">`What should I wear today? Keep it short.`</b>);
+        });
+
+      </pre>
+
+      <a href="../9-tokens/9-token-limit.html">➡️</a>
+    </main>
+
+    <script>
+      async function start() {
+        console.log(`
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Session destruction %
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        `);
+
+        const session = await ai.languageModel.create({
+          systemPrompt:
+            'You are a friendly, helpful assistant specialized in clothing choices. Keep it short.',
+        });
+
+        const promptButton = document.getElementById('promptButton');
+        const destroyButton = document.getElementById('destroyButton');
+
+        const result = await session.prompt(
+          `What should I wear today? Keep it short.`
+        );
+        console.log('Initial answer =====', result);
+
+        // Add click listener for prompt generation
+        promptButton.addEventListener('click', async () => {
+          try {
+            const result = await session.prompt(
+              `What should I wear today? Keep it short.`
+            );
+            console.log('New prompt answer =====', result);
+          } catch (error) {
+            console.error('Prompt error:', error);
+          }
+        });
+
+        // Add click listener for destruction
+        destroyButton.addEventListener('click', async () => {
+          // Destroy the session
+          session.destroy();
+          console.log('Session destroyed');
+
+          const result2 = await session.prompt(
+            `What should I wear today? Keep it short.`
+          );
+
+          console.log('Post destruction answer =====', result2);
+        });
+      }
+
+      start();
+    </script>
+    <script src="../audio-slides.js"></script>
+  </body>
+</html>

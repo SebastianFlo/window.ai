@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>window.ai</title>
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <main>
+      <h1>Web Workers (needs server)</h1>
+
+      <h3>Using window.ai in a Web Worker</h3>
+      <p>Access the AI namespace using <code>self.ai</code> in your worker:</p>
+
+      <pre class="code-snippet">
+// In worker.js
+let model;
+
+async function initializeModel() {
+  model = await self.ai.languageModel.create();
+  self.postMessage({ type: 'initialized' });
+}
+
+self.onmessage = async function(e) {
+  if (e.data.type === 'prompt') {
+    const response = await model.generateText(e.data.prompt);
+    self.postMessage({
+      type: 'response',
+      result: response
+    });
+  }
+};</pre
+      >
+
+      <h3>Live Demo</h3>
+      <div style="margin: 2rem 0">
+        <textarea
+          id="prompt"
+          placeholder="Enter your prompt here..."
+          style="
+            width: 100%;
+            height: 100px;
+            background: #1e1e2f;
+            color: #c5c8c6;
+            padding: 1rem;
+            border: 1px solid #333;
+            border-radius: 8px;
+          "
+        ></textarea>
+        <button id="send" style="margin-top: 1rem">Send to Worker</button>
+        <div id="response" style="margin-top: 2rem"></div>
+      </div>
+
+      <script>
+        // Create a worker instance
+        const worker = new Worker('worker.js');
+        const responseDiv = document.getElementById('response');
+        const promptInput = document.getElementById('prompt');
+        const sendButton = document.getElementById('send');
+
+        // Handle worker messages
+        worker.onmessage = function (e) {
+          if (e.data.type === 'initialized') {
+            sendButton.disabled = false;
+            responseDiv.textContent = 'Worker initialized and ready!';
+          } else if (e.data.type === 'response') {
+            responseDiv.textContent = e.data.result;
+          } else if (e.data.type === 'error') {
+            responseDiv.textContent = 'Error: ' + e.data.error;
+            responseDiv.style.color = '#ff6b6b';
+          }
+        };
+
+        // Handle button click
+        sendButton.onclick = function () {
+          const prompt = promptInput.value.trim();
+          if (prompt) {
+            responseDiv.textContent = 'Generating response...';
+            worker.postMessage({
+              type: 'prompt',
+              prompt: prompt,
+            });
+          }
+        };
+
+        // Initially disable the button until worker is ready
+        sendButton.disabled = true;
+      </script>
+
+      <a href="../12-best-practices/12.0-best-practices.html">⬅️</a>
+    </main>
+    <script src="../audio-slides.js"></script>
+  </body>
+</html>

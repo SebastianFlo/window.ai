@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>window.ai</title>
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+    </script>
+  </head>
+  <body>
+    <main>
+      <h1>Session Persistance</h1>
+
+      <pre class="mermaid">
+        flowchart TD
+        Start([Page Load]):::blue --> Check{Check localStorage}:::orange
+        Check -->|No stored session| New[Create new session]:::blue
+        Check -->|Found session| Restore[Restore session]:::blue
+        New --> A[Session ready]:::green
+        Restore --> A
+        A --> B[Prompt 1]:::green
+        B --> C{{Answer 1}}:::yellow
+        C --> Save1[Save to localStorage]:::purple
+        Save1 --> A
+        A --> E[Prompt 2]:::green
+        E --> F{{Answer 2}}:::yellow
+        F --> Save2[Save to localStorage]:::purple
+        Save2 --> A
+        A --> H[Prompt 3]:::green
+        H --> I{{Answer 3}}:::yellow
+        I --> Save3[Save to localStorage]:::purple
+
+        classDef blue fill:#0077b6,color:white
+        classDef orange fill:#ff9f1c,color:black
+        classDef green fill:#2ecc71,color:white
+        classDef yellow fill:#f1c40f,color:black
+        classDef purple fill:#9b59b6,color:white
+      </pre>
+
+      <p>
+        Each language model session consists of a persistent series of
+        interactions with the model:
+      </p>
+
+      <pre class="code-snippet">
+        const <b class="sessionClass">session</b> = await <b class="keyword">ai</b>.<b class="keyword">languageModel</b>.<b class="stream">create</b>({
+          <b class="keyword">systemPrompt</b>: <b class="string">"You are a friendly, helpful assistant specialized in clothing choices."</b>
+        });
+
+        const <b class="keyword">firstAnswer</b> = await <b class="sessionClass">session</b>.<b class="stream">prompt</b>(<b class="string">`
+          What should I wear today? It's sunny and I'm unsure between a t-shirt and a polo. You speak like a pirate.
+        `</b>);
+
+        const <b class="keyword">secondAnswer</b> = await <b class="sessionClass">session</b>.<b class="stream">prompt</b>(<b class="string">`
+          Today is actually going to rain and be cold! New advice??
+        `</b>);
+
+        const <b class="keyword">thirdAnswer</b> = await <b class="sessionClass">session</b>.<b class="stream">prompt</b>(<b class="string">`
+          Will it rain today?
+        `</b>);
+      </pre>
+
+      <a href="../8-destruction/8-session-abort.html">➡️</a>
+    </main>
+
+    <script>
+      // Initialize AI namespace for web apps and extensions
+      const aiNamespace = self.ai || chrome.aiOriginTrial || chrome.ai;
+
+      // Session UUID - in a real app, this would come from a session picker
+      const uuid = '7e62c0e0-6518-4658-bc38-e7a43217df87';
+
+      // Get session data from localStorage
+      function getSessionData(uuid) {
+        try {
+          console.log('Checking localStorage for existing session...');
+          const storedSession = localStorage.getItem(uuid);
+
+          if (storedSession) {
+            console.log('Found existing session in localStorage');
+            return JSON.parse(storedSession);
+          }
+
+          console.log('No existing session found');
+          return false;
+        } catch (err) {
+          console.error('Error accessing localStorage:', err);
+          return false;
+        }
+      }
+
+      async function start() {
+        console.log(`
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Session Persistance with Storage %
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        `);
+
+        let sessionData = getSessionData(uuid);
+
+        if (!sessionData) {
+          console.log('Creating new session...');
+          const { defaultTopK, defaultTemperature } =
+            await aiNamespace.languageModel.capabilities();
+          sessionData = {
+            systemPrompt:
+              'You are a friendly, helpful assistant specialized in clothing choices.',
+            initialPrompts: [],
+            topK: defaultTopK,
+            temperature: defaultTemperature,
+          };
+        } else {
+          console.log(
+            'Restored existing session with previous conversation:',
+            sessionData
+          );
+        }
+
+        const session = await aiNamespace.languageModel.create(sessionData);
+
+        const result = await session.prompt(`
+          What should I wear today? It's sunny and I'm unsure between a t-shirt and a polo. Keep it short. You speak like a pirate.
+        `);
+
+        console.log('First Answer ===============');
+        console.log(result);
+
+        // Save conversation to session data
+        sessionData.initialPrompts.push(
+          {
+            role: 'user',
+            content:
+              "What should I wear today? It's sunny and I'm unsure between a t-shirt and a polo.",
+          },
+          { role: 'assistant', content: result }
+        );
+        localStorage.setItem(uuid, JSON.stringify(sessionData));
+
+        const result2 = await session.prompt(`
+          Today is actually going to rain and be cold! New advice??
+        `);
+
+        console.log('Second Answer ===============');
+        console.log(result2);
+
+        // Save conversation to session data
+        sessionData.initialPrompts.push(
+          {
+            role: 'user',
+            content:
+              'Today is actually going to rain and be cold! New advice??',
+          },
+          { role: 'assistant', content: result2 }
+        );
+        localStorage.setItem(uuid, JSON.stringify(sessionData));
+
+        const result3 = await session.prompt(`
+          Will it rain today?
+        `);
+
+        console.log('Third Answer ===============');
+        console.log(result3);
+
+        // Save conversation to session data
+        sessionData.initialPrompts.push(
+          { role: 'user', content: 'Will it rain today?' },
+          { role: 'assistant', content: result3 }
+        );
+        localStorage.setItem(uuid, JSON.stringify(sessionData));
+      }
+
+      start();
+    </script>
+    <script src="../audio-slides.js"></script>
+  </body>
+</html>

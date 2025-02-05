@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>window.ai</title>
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      .show {
+        z-index: 1000;
+        position: absolute;
+        background-color: #ffffff;
+        color: black;
+        border: 1px solid rgb(0, 0, 0);
+        padding: 1rem;
+        display: block;
+        margin: 0;
+        list-style-type: none;
+        list-style: none;
+        width: fit-content;
+        max-width: 400px;
+      }
+
+      .hide {
+        display: none;
+      }
+
+      .show li {
+        list-style: none;
+      }
+
+      .show a {
+        border: 0 !important;
+        text-decoration: none;
+      }
+
+      .show a:hover {
+        text-decoration: underline !important;
+      }
+
+      pre {
+        text-wrap: auto;
+        width: 400px;
+      }
+
+      textarea {
+        width: 50%;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Explainer</h1>
+
+      <div id="content">
+        <p>
+          In
+          <b title="Quantum mechanics">quantum mechanics</b>,
+          <b>Schrödinger's cat</b> is a
+          <b title="Thought experiment">thought experiment</b>
+          concerning
+          <b title="Quantum superposition">quantum superposition</b>.
+          <br />
+          <br />
+          In the thought experiment, a hypothetical
+          <b title="Cat">cat</b> may be considered simultaneously both alive and
+          dead, while it is unobserved in a closed box, as a result of its fate
+          being linked to a random
+          <b title="Subatomic particle">subatomic</b>
+          event that may or may not occur. This experiment viewed this way is
+          described as a <b title="Paradox">paradox</b>.
+          <br />
+          <br />
+          This thought experiment was devised by physicist
+          <b title="Erwin Schrödinger">Erwin Schrödinger</b>
+          in 1935 in a discussion with
+          <b title="Albert Einstein">Albert Einstein</b> to illustrate what
+          Schrödinger saw as the problems of the
+          <b title="Copenhagen interpretation">Copenhagen interpretation</b>
+          of quantum mechanics.
+        </p>
+
+        <textarea rows="10"></textarea>
+      </div>
+
+      <!-- initially hidden right-click menu -->
+      <div class="hide" id="rmenu">
+        <button id="explain-button" onclick="explain()">Explain</button>
+      </div>
+
+      <a href="./10.1-demo-fixer.html">➡️</a>
+    </main>
+
+    <script src="./jquery.js"></script>
+    <script src="./10.0.script.js"></script>
+    <script src="../audio-slides.js"></script>
+  </body>
+</html>

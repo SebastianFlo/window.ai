@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>window.ai</title>
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+    </script>
+  </head>
+  <body>
+    <main>
+      <h1>Custom Roles</h1>
+
+      <pre class="mermaid">
+        flowchart TD
+        A[Create Multi User Session]:::blue --> B[(systemPrompt: Mediator)]:::purple
+        B -->C{{Browser AI}}:::orange
+        C --> |🕵️‍♀️🤖🕵️‍♀️| A
+        A --> D["`Prompt:
+          **User 1**
+          **User 2**
+          *Assistant*`"]:::green
+        D --> |Processing| F["`*Result*: Mediation between roles`"]:::yellow
+
+        classDef blue stroke:#0077b6,fill:#0077b6,color:white
+        classDef orange stroke:#ff9f1c,fill:#ff9f1c,color:black
+        classDef green stroke:#2ecc71,fill:#2ecc71,color:white
+        classDef yellow stroke:#f1c40f,fill:#f1c40f,color:black
+        classDef purple stroke:#9b59b6,fill:#9b59b6,color:white
+      </pre>
+
+      <pre
+        class="code-snippet"
+        style="padding: 1rem; font-size: 1rem; margin-top: 10rem"
+      >
+        const <b class="keyword">multiUserSession</b> = await <b class="keyword">ai</b>.<b class="keyword">languageModel</b>.<b class="stream">create</b>({
+          <b class="keyword">systemPrompt</b>: <b class="string">"You are a mediator in a discussion between two departments."</b>
+        });
+
+        const <b class="resultClass">result</b> = await <b class="keyword">multiUserSession</b>.<b class="stream">prompt</b>([
+          {
+            <b class="keyword">role</b>: <b class="string">"user"</b>,
+            <b class="keyword">content</b>: <b class="string">"Marketing: We need more budget for advertising campaigns."</b>
+          },
+          {
+            <b class="keyword">role</b>: <b class="string">"user"</b>,
+            <b class="keyword">content</b>: <b class="string">"Finance: We need to cut costs and advertising is on the list."</b>
+          },
+          {
+            <b class="keyword">role</b>: <b class="string">"assistant"</b>,
+            <b class="keyword">content</b>: <b class="string">"Let's explore a compromise that satisfies both departments."</b> }
+        ]);
+
+        <b class="comment">// `result` will contain a compromise proposal from the assistant.</b>
+      </pre>
+
+      <a href="../5-tools/5-tools.html">➡️</a>
+    </main>
+
+    <script>
+      async function start() {
+        console.log(`
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Custom Roles %
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        `);
+        console.log('Starting the AI model 🤖...');
+
+        const multiUserSession = await ai.languageModel.create({
+          systemPrompt:
+            'You are a mediator in a discussion between two departments.',
+        });
+
+        const result = await multiUserSession.prompt(`[
+          { role: "user", content: "Marketing: We need more budget for advertising campaigns." },
+          { role: "user", content: "Finance: We need to cut costs and advertising is on the list." },
+          { role: "assistant", content: "Let's explore a compromise that satisfies both departments." },
+        ]`);
+
+        // `result` will contain a compromise proposal from the assistant.
+        console.log(result);
+      }
+
+      start();
+    </script>
+    <script src="../audio-slides.js"></script>
+  </body>
+</html>

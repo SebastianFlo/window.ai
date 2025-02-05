@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>window.ai</title>
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+    </script>
+  </head>
+  <body>
+    <main>
+      <h1>Stream prompting</h1>
+
+      <pre class="mermaid">
+        flowchart TD
+        B([Create AI Session]):::blue
+        B <--> C([Browser Environment]):::orange
+        B -->D([Prompt Stream: Write me an extra-long poem]):::green
+        D -->|Start Streaming Result| E[Log Chunk]:::yellow
+        E -->|"Next Chunk?"| F{More Data?}:::purple
+        F -->|Yes| E
+
+        classDef blue stroke:#0077b6,fill:#0077b6,color:white
+        classDef orange stroke:#ff9f1c,fill:#ff9f1c,color:black
+        classDef green stroke:#2ecc71,fill:#2ecc71,color:white
+        classDef yellow stroke:#f1c40f,fill:#f1c40f,color:black
+        classDef purple stroke:#9b59b6,fill:#9b59b6,color:white
+      </pre>
+
+      <pre
+        class="code-snippet"
+        style="padding: 1rem; font-size: 1rem; margin-top: 1rem"
+      >
+        const <b class="sessionClass">session</b> = await <b class="keyword">ai</b>.<b class="keyword">languageModel</b>.<b class="stream">create</b>();
+
+        const <b class="keyword">stream</b> = await <b class="sessionClass">session</b>.<b class="stream">promptStreaming</b>(<b class="string">"Write me an extra-long poem."</b>);
+
+        let <b class="keyword">text</b> = <b class="string">''</b>;
+        for await (const <b class="keyword">chunk</b> of <b class="keyword">stream</b>) {
+          <b class="keyword">text</b> += <b class="keyword">chunk</b>;
+          console.<b class="stream">log</b>(<b class="keyword">chunk</b>);
+        }
+      </pre>
+
+      <a href="../2-system-prompt/2-system-prompts.html">➡️</a>
+    </main>
+
+    <script>
+      async function start() {
+        const before = new Date();
+        console.log(`
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Stream Prompting %
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        `);
+        console.log('Starting the AI model...');
+
+        const session = await ai.languageModel.create();
+
+        // Prompt the model and stream the result:
+        const stream = await session.promptStreaming(
+          'Write me an extra-long poem.'
+        );
+
+        let text = '';
+        for await (const chunk of stream) {
+          text += chunk;
+          console.log(text);
+        }
+      }
+
+      start();
+    </script>
+    <script src="../audio-slides.js"></script>
+  </body>
+</html>

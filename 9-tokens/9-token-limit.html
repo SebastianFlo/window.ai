@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>window.ai</title>
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <script type="module">
+      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+    </script>
+  </head>
+  <body>
+    <main>
+      <h1>Token limit</h1>
+
+      <p>
+        To know how many tokens a string will consume, without actually
+        processing it, developers can use the <b>countPromptTokens()</b> method:
+      </p>
+
+      <pre class="code-snippet">
+        const <b class="keyword">promptString</b> = <b class="string">`What should I wear today? Be as detailed as possible.`</b>;
+        const <b class="keyword">numTokens</b> = await <b class="sessionClass">session</b>.<b class="stream">countPromptTokens</b>(<b class="keyword">promptString</b>);
+
+        const <b class="keyword">numTokensCJS</b> = await <b class="sessionClass">session</b>.<b class="stream">countPromptTokens</b>(<b class="string">'CopenhagenJS'</b>);
+      </pre>
+
+      <p>
+        A given language model session will have a maximum number of tokens it
+        can process. Developers can check their current usage and progress
+        toward that limit by using the following properties on the session
+        object.
+      </p>
+
+      <pre class="code-snippet">
+        const <b class="sessionClass">session</b> = await <b class="keyword">ai</b>.<b class="keyword">languageModel</b>.<b class="stream">create</b>({
+          <b class="keyword">systemPrompt</b>:
+            <b class="string">"You are a friendly, helpful assistant specialized in clothing choices."</b>,
+        });
+
+
+        const <b class="resultClass">result</b> = await <b class="sessionClass">session</b>.<b class="stream">prompt</b>(<b class="string">`What should I wear today? Be as detailed as possible.`</b>);
+
+        console.<b class="stream">log</b>(<b class="string">`${<b class="sessionClass">session</b>.tokensSoFar}/${<b class="sessionClass">session</b>.maxTokens} (${<b class="sessionClass">session</b>.tokensLeft} left)`</b>);
+
+        const <b class="resultClass">result2</b> = await <b class="sessionClass">session</b>.<b class="stream">prompt</b>(<b class="string">`Today is actually going to rain and be cold! New advice??`</b>);
+        const <b class="resultClass">result3</b> = await <b class="sessionClass">session</b>.<b class="stream">prompt</b>(<b class="string">`Today is actually going to be snowing frost! What to do?`</b>);
+
+
+        <b class="comment"># Session overflow check</b>
+        <b class="sessionClass">session</b>.<b class="stream">addEventListener</b>(<b class="string">"contextoverflow"</b>, () => {
+          console.<b class="stream">log</b>(<b class="string">"Context overflow!"</b>);
+        });
+      </pre>
+
+      <a href="../10-demo/10.0-demo-explainer.html">➡️</a>
+    </main>
+
+    <script>
+      async function start() {
+        console.log(`
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Token Limit %
+        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        `);
+
+        const session = await ai.languageModel.create({
+          systemPrompt:
+            'You are a friendly, helpful assistant specialized in clothing choices.',
+        });
+
+        const promptString = `What should I wear today? Be as detailed as possible.`;
+        const numTokens = await session.countPromptTokens(promptString);
+
+        const numTokensCJS = await session.countPromptTokens('CopenhagenJS');
+
+        console.log('Number of tokens for promptString =====', numTokens);
+        console.log('Number of tokens for copenhagenJs =====', numTokensCJS);
+
+        const result = await session.prompt(promptString);
+
+        console.log('Answer =====');
+        console.log(result);
+
+        console.log(
+          `${session.tokensSoFar}/${session.maxTokens} (${session.tokensLeft} left)`
+        );
+
+        const result2 = await session.prompt(
+          `Today is actually going to rain and be cold! New advice??`
+        );
+
+        console.log('Answer 2 =====');
+        console.log(result2);
+
+        console.log(
+          `${session.tokensSoFar}/${session.maxTokens} (${session.tokensLeft} left)`
+        );
+
+        const result3 = await session.prompt(
+          `Today is actually going to be snowing frost! What to do?`
+        );
+
+        console.log('Answer 3 =====');
+        console.log(result3);
+
+        console.log(
+          `${session.tokensSoFar}/${session.maxTokens} (${session.tokensLeft} left)`
+        );
+      }
+
+      start();
+    </script>
+    <script src="../audio-slides.js"></script>
+  </body>
+</html>

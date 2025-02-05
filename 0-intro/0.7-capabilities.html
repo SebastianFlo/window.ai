@@ -13,8 +13,18 @@
     <main>
       <h1>Capabilities</h1>
 
-      <p>To know how many tokens a string will consume, without actually processing it, developers can use the countPromptTokens() method:</p>
 
+      <h3>The object</h3>
+      <pre class="code-snippet">
+        const aiNamespace = window.ai|| self.ai // WebWorkers
+
+        // or
+
+        const aiNamespace = chrome.aiOriginTrial || chrome.ai // Chrome Extensions;
+
+        const languageModel = await aiNamespace.languageModel.create();</pre>
+
+      <h3>Is it on?</h3>
       <pre class="code-snippet">
 const capabilities = await ai.languageModel.capabilities();
 console.log(capabilities.available); </pre>
