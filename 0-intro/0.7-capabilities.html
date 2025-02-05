@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="../style.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://fonts.gstatic.com/s/montserrat/v29/JTUQjIg1_i6t8kCHKm459WxRyS7m0dR9pA.woff2" as="font" type="font/woff2" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   </head>
   <body>
@@ -16,30 +17,30 @@
 
       <h3>The object</h3>
       <pre class="code-snippet">
-        const aiNamespace = window.ai|| self.ai // WebWorkers
+        const <b class="sessionClass">aiNamespace</b> = window.<b class="keyword">ai</b> || self.<b class="keyword">ai</b> <b class="comment">// WebWorkers</b>
 
-        // or
+        <b class="comment">// or</b>
 
-        const aiNamespace = chrome.aiOriginTrial || chrome.ai // Chrome Extensions;
+        const <b class="sessionClass">aiNamespace</b> = chrome.<b class="keyword">aiOriginTrial</b> || chrome.<b class="keyword">ai</b> <b class="comment">// Chrome Extensions</b>
 
-        const languageModel = await aiNamespace.languageModel.create();</pre>
+        const <b class="sessionClass">languageModel</b> = <b class="keyword">await</b> <b class="sessionClass">aiNamespace</b>.<b class="stream">languageModel</b>.<b class="stream">create</b>();</pre>
 
       <h3>Is it on?</h3>
       <pre class="code-snippet">
-const capabilities = await ai.languageModel.capabilities();
-console.log(capabilities.available); </pre>
+const <b class="resultClass">capabilities</b> = await <b class="keyword">ai</b>.<b class="sessionClass">languageModel</b>.<b class="stream">capabilities</b>();
+console.<b class="stream">log</b>(<b class="resultClass">capabilities</b>.available);</pre>
 
       <p>
         The capabilities.available property is a string that can take one of three values:<p>
           <ul>
             <li>
-              "no", indicating the device or browser does not support prompting a language model at all.
+              <span class="highlight">"no"</span>, indicating the device or browser does not support prompting a language model at all.
             </li>
             <li>
-              "after-download", indicating the device or browser supports prompting a language model, but it needs to be downloaded before it can be used.
+              <span class="highlight">"after-download"</span>, indicating the device or browser supports prompting a language model, but it needs to be downloaded before it can be used.
             </li>
             <li>
-              "readily", indicating the device or browser supports prompting a language model and it’s ready to be used without any downloading steps.
+              <span class="highlight">"readily"</span>, indicating the device or browser supports prompting a language model and it's ready to be used without any downloading steps.
             </li>
           </ul>
       </p>

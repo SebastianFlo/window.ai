@@ -25,7 +25,7 @@
         flowchart TD
         B([Create AI Session]):::blue
         B <--> C([Browser Environment]):::orange
-        B -->D([Prompt Stream: Write me an extra-long poem]):::green
+        B -->D[Prompt Stream: Write me an extra-long poem]:::green
         D -->|Start Streaming Result| E[Log Chunk]:::yellow
         E -->|"Next Chunk?"| F{More Data?}:::purple
         F -->|Yes| E
