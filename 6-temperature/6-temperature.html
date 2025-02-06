@@ -50,14 +50,14 @@
             <b class="keyword">topK</b>: <b class="keyword">0</b>,
           });
 
-          await <b class="keyword">logicalSession</b>.<b class="stream">prompt</b>(<b class="string">"Tell me a short, unusual joke."</b>)
+          await <b class="keyword">logicalSession</b>.<b class="stream">prompt</b>(<b class="string">"What would be an unusual event happening at a programming meetup? Keep it short."</b>)
 
           const <b class="keyword">creativeSession</b> = await <b class="keyword">ai</b>.<b class="keyword">languageModel</b>.<b class="stream">create</b>({
             <b class="keyword">temperature</b>: <b class="keyword">1.5</b>,
             <b class="keyword">topK</b>: <b class="keyword">5</b>,
           });
 
-          await <b class="keyword">creativeSession</b>.<b class="stream">prompt</b>(<b class="string">"Tell me a short, unusual joke."</b>)
+          await <b class="keyword">creativeSession</b>.<b class="stream">prompt</b>(<b class="string">"What would be an unusual event happening at a programming meetup? Keep it short."</b>)
       </pre>
 
       <a href="../7-persistance/7.0-session-persistance.html">➡️</a>
@@ -87,10 +87,18 @@
         // capabilities also contains defaultTopK and maxTopK.
         console.log('Structured, logical, and predictable...');
 
-        console.log(await logicalSession.prompt('Tell me a short joke.'));
+        console.log(
+          await logicalSession.prompt(
+            'What would be an unusual event happening at a programming meetup? Keep it short.'
+          )
+        );
 
         console.log('Creative and unexpected elements...');
-        console.log(await creativeSession.prompt('Tell me a short joke.'));
+        console.log(
+          await creativeSession.prompt(
+            'What would be an unusual event happening at a programming meetup? Keep it short.'
+          )
+        );
       }
 
       start();
