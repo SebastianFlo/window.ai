@@ -5,6 +5,7 @@ function main() {
       'Your browser does not support the Web Speech API. Please use Chrome or another supported browser.'
     );
   } else {
+    console.log('Initializing speech recognition...');
     // Initialize the speech recognition object
     const recognition = new webkitSpeechRecognition();
     recognition.continuous = true; // Keep listening even after a phrase is recognized
